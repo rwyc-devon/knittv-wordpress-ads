@@ -1,0 +1,26 @@
+[id*=knittvads] input[type=checkbox],
+[id*=knittvads] input[type=checkbox] + label
+{
+	display: block;
+	line-height: 1.5em;
+	height: 1.5em;
+}
+[id*=knittvads] :checked + label + .ifprev
+{
+	display: block;
+}
+[id*=knittvads] h3
+{
+	margin: 0.25em 0;
+}
+[id*=knittvads] .adschooser
+{
+	background: #ddd;
+	border-radius: 0.25em;
+	padding: 0.25em;
+	margin: 0.5em 0;
+}
+[id*=knittvads] select
+{
+	display: block;
+}
