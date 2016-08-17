@@ -23,13 +23,14 @@
 		var matches=c.name.match('^(.+)\\[ad(\\d\\d)\\]$');
 		var n=(("000"+(parseInt(matches[2], 10)+1))).substr(-2);
 		c.name=matches[1]+"[ad"+(n)+"]";
-		c.addEventListener("change", lastListener);
+		c.onchange=lastListener;
 		return c;
 	};
 	var lastListener=function(e) {
 		if(this.value) {
-			this.removeEventListener("change", lastListener);
-			this.addEventListener("change", listener);
+			this.onkeypress=listener;
+			this.onpaste=listener;
+			this.onchange=listener;
 			this.parentNode.appendChild(appendClone(this));
 		}
 	};
@@ -39,11 +40,14 @@
 			var widget=widgets[i];
 			var inputs=widgets[i].getElementsByTagName("input");
 			for(ii=0; ii<inputs.length-1; ii++) {
-				inputs[ii].removeEventListener("change", listener);
-				inputs[ii].addEventListener("change", listener);
+				inputs[ii].onfocus=function(){this.select()};
+				inputs[ii].onkeypress=listener;
+				inputs[ii].onpaste=listener;
+				inputs[ii].onchange=listener;
 			}
-			inputs[inputs.length-1].removeEventListener("change", lastListener);
-			inputs[inputs.length-1].addEventListener("change", lastListener);
+			inputs[ii].onkeypress=lastListener;
+			inputs[ii].onpaste=lastListener;
+			inputs[inputs.length-1].onchange=lastListener;
 		}
 	};
 	setInterval(addListeners, 500); //TODO: call this only when the form reloads.

@@ -1,9 +1,7 @@
-[id*=knittvads] input[type=checkbox],
-[id*=knittvads] input[type=checkbox] + label
+[id*=knittvads] input,
+[id*=knittvads] label
 {
 	display: block;
-	line-height: 1.5em;
-	height: 1.5em;
 }
 [id*=knittvads] :checked + label + .ifprev
 {
