@@ -30,7 +30,7 @@ class KnittvAds extends WP_Widget {
 	}
 	function widget($args, $instance) {
 		echo "<div class='knittv-ads'>";
-		echo "<h3>${instance["title"]}</h3>";
+		echo "<h3 class='widget-title'>${instance["title"]}</h3>";
 		foreach($instance["ads"] as $i=>$ad) {
 			echo "<div class='knittv-ad' id='knittv-ad-$i'>$ad</div>";
 		}
