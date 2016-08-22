@@ -14,6 +14,7 @@ define("WP_DEBUG_LOG", true);
  */
 function knittv_ads_enqueue_scripts() {
 	wp_enqueue_style('knittv-ads', plugin_dir_url(__FILE__) . '/style.css');
+	wp_enqueue_script("knittv-ads-adblock-detect", plugin_dir_url(__FILE__) . "/script.js");
 }
 
 /*
@@ -29,21 +30,28 @@ class KnittvAds extends WP_Widget {
 		parent::__construct(false, __("Ads"), array('description'=>'Simple Widget for KnitTV Ads'));
 	}
 	function widget($args, $instance) {
-		echo "<div class='knittv-ads'>";
+		echo "<div class='knittv-ads adsbox'>";
 		echo "<h3 class='widget-title'>${instance["title"]}</h3>";
 		foreach($instance["ads"] as $i=>$ad) {
 			echo "<div class='knittv-ad' id='knittv-ad-$i'>$ad</div>";
 		}
 		echo "</div>";
+		echo "<div class='knittv-ads knittv-adblock-message' style='display: none'>";
+		echo "<h3 class='widget-title'>${instance["adblock-title"]}</h3>";
+		echo "<p>${instance["adblock-message"]}</p>";
+		echo "</div>";
 	}
 	function form($instance) {
 		$nonce=wp_create_nonce('knittv_ads_widget_form');
 		echo "<input type='hidden' name='knittv_ads_widget_nonce' value='$nonce'>";
-		$this->knittv_input($instance, "title", "Title", "Ads");
+		$this->knittv_input($instance, "title", "Title");
 		echo "<div class='adschooser'>";
 		echo "<h3>Ads</h3>";
 		$this->knittv_ads($instance);
 		echo "</div>";
+		echo "<p>Write a simple, tasteful message to AdBlock users. Make sure to follow the <a href='https://easylist.to/2013/05/10/anti-adblock-guide-for-site-admins.html'>EasyList guidelines</a> otherwise the message itself may be blocked as well!</p>";
+		$this->knittv_input($instance, "adblock-title", "Adblock Message Title", "You Are Using AdBlock");
+		$this->knittv_input($instance, "adblock-message", "Adblock Message", "We don't love ads either, but we do have to pay the bills! Please consider donating to support our site.", "textarea");
 	}
 	function knittv_ads($instance) {
 		$n=0;
@@ -59,11 +67,16 @@ class KnittvAds extends WP_Widget {
 		$value=esc_attr($val);
 		echo "<input$class name='$name' value='$value' autocomplete='off'></input>";
 	}
-	function knittv_input($instance, $attribute, $label, $default="") {
+	function knittv_input($instance, $attribute, $label, $default="", $tagName="input") {
 		$name=esc_attr($this->get_field_name($attribute));
 		$id=esc_attr($this->get_field_id($attribute));
 		$value=esc_attr(isset($instance[$attribute])? $instance[$attribute]: $default);
-		echo "<label for='$id'>$label</label><input id='$id' name='$name' value='$value'></input>";
+		if($tagName=="textarea") {
+			echo "<label for='$id'>$label</label><$tagName id='$id' name='$name'>$value</$tagName>";
+		}
+		else {
+			echo "<label for='$id'>$label</label><$tagName id='$id' name='$name' value='$value'></$tagName>";
+		}
 	}
 	function update($new, $old) {
 		$instance=array();
@@ -78,6 +91,8 @@ class KnittvAds extends WP_Widget {
 				}
 			}
 			$instance["title"]=$new["title"];
+			$instance["adblock-title"]=$new["adblock-title"];
+			$instance["adblock-message"]=$new["adblock-message"];
 			return $instance;
 		}
 		else {
